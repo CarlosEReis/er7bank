@@ -1,37 +1,18 @@
 package com.er7system.er7bank.domain.model;
 
-import jakarta.persistence.*;
-import org.hibernate.annotations.CreationTimestamp;
-import org.hibernate.annotations.UpdateTimestamp;
-import org.hibernate.validator.constraints.br.CPF;
-
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
-@Entity
-@Table(name = "cliente")
 public class Cliente {
 
     // Todo: alterar a exposicao do id do cliente e trabalhar com UUID nas URLs
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String nome;
-
-    @CPF
     private String cpf;
     private LocalDate dataNascimento;
-
-    @Enumerated(value = EnumType.STRING)
     private TipoCliente tipo = TipoCliente.COMUM;
-
-    @CreationTimestamp
     private LocalDateTime dataCriacao;
-
-    @UpdateTimestamp
     private LocalDateTime dataAtualizacao;
-
-    @Embedded
     private Endereco endereco;
 
     public Long getId() {
@@ -82,8 +63,16 @@ public class Cliente {
         this.tipo = tipo;
     }
 
+    public void setDataCriacao(LocalDateTime dataCriacao) {
+        this.dataCriacao = dataCriacao;
+    }
+
     public LocalDateTime getDataCriacao() {
         return dataCriacao;
+    }
+
+    public void setDataAtualizacao(LocalDateTime dataAtualizacao) {
+        this.dataAtualizacao = dataAtualizacao;
     }
 
     public LocalDateTime getDataAtualizacao() {
