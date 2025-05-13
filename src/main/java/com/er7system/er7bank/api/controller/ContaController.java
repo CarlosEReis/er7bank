@@ -13,6 +13,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
+import java.util.List;
 
 @RestController
 @RequestMapping("/v1/contas")
@@ -47,6 +48,11 @@ public class ContaController {
         // todo: implementar o retorno do ID da conta criada
         var uri = "http://localhost:8080/v1/contas/" + conta.getNumero();
         return ResponseEntity.created(URI.create(uri)).body(conta);
+    }
+
+    @GetMapping
+    public List<Conta> listar() {
+        return contaService.listar();
     }
 
     @GetMapping("/{idConta}")

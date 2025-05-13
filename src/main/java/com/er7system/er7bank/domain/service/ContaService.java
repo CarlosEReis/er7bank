@@ -1,14 +1,11 @@
 package com.er7system.er7bank.domain.service;
 
-import com.er7system.er7bank.domain.dto.DadosPagamentoDTO;
 import com.er7system.er7bank.domain.exception.ContaNaoEncontradaException;
 import com.er7system.er7bank.domain.exception.TaxaNaoAplicavelException;
 import com.er7system.er7bank.domain.exception.TipoDeContaJaCriadaException;
 import com.er7system.er7bank.domain.model.*;
 import com.er7system.er7bank.domain.repository.ContaRepository;
 
-import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -20,8 +17,8 @@ public class ContaService {
 
     private final ClienteService clienteService;
     private final ContaRepository contaRepository;
-
-    public ContaService(ContaRepository contaRepository, ClienteService clienteService) {
+    
+    public ContaService(ContaRepository contaRepository,ClienteService clienteService) {
         this.clienteService = clienteService;
         this.contaRepository = contaRepository;
     }
@@ -51,6 +48,8 @@ public class ContaService {
         Conta contaOrigem = buscarPorId(idContaOrigem);
         Conta contaDestino = buscarPorId(idContaDestino);
         contaOrigem.transferir(valor, contaDestino);
+        contaRepository.save(contaOrigem);
+        contaRepository.save(contaDestino);
     }
 
     @Transactional
@@ -58,6 +57,7 @@ public class ContaService {
         var conta = buscarPorId(numeroConta);
         conta.depositar(valor);
         conta.registraTransacao(valor, TipoTransacao.DEPOSITO, DescricaoTransacao.DEPOSITO_RECEBIDO);
+        contaRepository.save(conta);
     }
 
     @Transactional
@@ -65,23 +65,26 @@ public class ContaService {
         var conta = buscarPorId(numeroConta);
         conta.sacar(valor);
         conta.registraTransacao(valor, TipoTransacao.SAQUE, DescricaoTransacao.SAQUE_REALIZADO);
+        contaRepository.save(conta);
     }
 
     @Transactional
     public void aplicaTaxaManutencao(Integer idConta, BigDecimal valor) {
         Conta conta = buscarPorId(idConta);
-        if (conta instanceof ContaCorrente contaCC)
-            contaCC.setTaxaManutencao(valor);
-        else
+        if (conta instanceof ContaCorrente contaC) {
+            contaC.setTaxaManutencao(valor);
+            contaRepository.save(contaC);
+        } else
             throw new TaxaNaoAplicavelException("Nao de manutenção não pode ser aplicada a uma conta " + conta.getTipoConta());
     }
 
     @Transactional
     public void aplicaTaxaRendimento(Integer idConta, float valor) {
         Conta conta = buscarPorId(idConta);
-        if (conta instanceof ContaPoupanca contaCP)
-            contaCP.setTaxaRendimento(valor);
-        else
+        if (conta instanceof ContaPoupanca contaP) {
+            contaP.setTaxaRendimento(valor);
+            contaRepository.save(contaP);
+        } else
             throw new TaxaNaoAplicavelException("Nao de manutenção não pode ser aplicada a uma conta " + conta.getTipoConta());
     }
 
@@ -95,5 +98,7 @@ public class ContaService {
         }
     }
 
-
+    public List<Conta> listar() {
+        return contaRepository.findAll();
+    }
 }
