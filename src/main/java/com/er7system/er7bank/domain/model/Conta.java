@@ -1,47 +1,32 @@
 package com.er7system.er7bank.domain.model;
 
-import jakarta.persistence.*;
-import org.hibernate.annotations.CreationTimestamp;
-import org.hibernate.annotations.UpdateTimestamp;
-
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
 
-@Entity
-@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
+
 public abstract class Conta {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer numero;
     protected BigDecimal saldo = BigDecimal.ZERO;
     private LocalDateTime ultimaMovimentacao = LocalDateTime.now();
-
-    @ManyToOne
     private Cliente cliente;
-
-    @Enumerated(EnumType.STRING)
     private TipoConta tipoConta;
 
+    /*
     @OrderBy("id DESC")
     @OneToMany(mappedBy = "conta", cascade = CascadeType.ALL)
-    private List<Transacao> transacoes;
+    private List<Transacao> transacoes;*/
 
     //private List<String> chavesPix;
 
-    @CreationTimestamp
     private LocalDateTime dataCriacao;
-
-    @UpdateTimestamp
     private LocalDateTime dataAtualizacao;
 
     public Conta(){}
 
     public Conta(Cliente cliente) {
         this.cliente = cliente;
-        this.transacoes = new ArrayList<>();
+        //this.transacoes = new ArrayList<>();
         //this.chavesPix = new ArrayList<>();
     }
 
@@ -86,9 +71,9 @@ public abstract class Conta {
         this.tipoConta = tipoConta;
     }
 
-    public List<Transacao> getTransacoes() {
+    /*public List<Transacao> getTransacoes() {
         return transacoes;
-    }
+    }*/
 
     /*public List<String> getChavesPix() {
         return chavesPix;
@@ -98,7 +83,7 @@ public abstract class Conta {
 
     public void registraTransacao(BigDecimal valor, TipoTransacao tipoTransacao, DescricaoTransacao descricao) {
         var transacao = new Transacao(this, valor, tipoTransacao, descricao);
-        this.transacoes.add(transacao);
+        //this.transacoes.add(transacao);
         this.atualizaDataMovimentacao();
     }
 
@@ -112,5 +97,21 @@ public abstract class Conta {
 
     public void debitar(BigDecimal valor) {
         sacar(valor);
+    }
+
+    public void setSaldo(BigDecimal saldo) {
+        this.saldo = saldo;
+    }
+
+    public void setUltimaMovimentacao(LocalDateTime ultimaMovimentacao) {
+        this.ultimaMovimentacao = ultimaMovimentacao;
+    }
+
+    public void setDataCriacao(LocalDateTime dataCriacao) {
+        this.dataCriacao = dataCriacao;
+    }
+
+    public void setDataAtualizacao(LocalDateTime dataAtualizacao) {
+        this.dataAtualizacao = dataAtualizacao;
     }
 }

@@ -2,15 +2,11 @@ package com.er7system.er7bank.domain.model;
 
 import com.er7system.er7bank.domain.exception.SaldoInsuficienteException;
 import com.er7system.er7bank.domain.exception.TrasanferenciaException;
-import com.fasterxml.jackson.annotation.JsonProperty;
-import jakarta.persistence.Entity;
 
 import java.math.BigDecimal;
 
-@Entity
 public class ContaPoupanca extends Conta {
 
-    @JsonProperty
     private float taxaRendimento;
 
     public ContaPoupanca() {}
