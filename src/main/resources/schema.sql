@@ -76,22 +76,19 @@ CREATE TABLE IF NOT EXISTS transacao (
    data TIMESTAMP(6),
    descricao VARCHAR(255) CHECK (descricao IN (
         'TRANSFERENCIA_RECEBIDA',
-        'PAGAMENTO_DE_FATURA',
-        'COMPRA_NO_DEBITO',
         'TRANSFERENCIA_ENVIADA',
-        'PAGAMENTO_EFETUADO',
-        'DEPOSITO_RECEBIDO',
-        'SAQUE_REALIZADO'
-       )),
+        'DEPOSITO_CAIXA_ELETRONICO',
+        'SAQUE_CAIXA_ELETRONICO',
+        'PAGAMENTO_FATURA',
+        'COMPRA_DEBITO',
+        'COMPRA_CREDITO',
+        'PIX_RECEBIDO',
+        'PIX_ENVIADO',
+        'PAGAMENTO_PIX'
+        )),
    tipo VARCHAR(255) CHECK (tipo IN (
-        'SAQUE',
-        'DEPOSITO',
-        'TRANSFERENCIA',
-        'PIX',
-        'PAGAMENTO',
-        'CREDITO',
-        'DEBITO'
-       ))
+        'ENTRADA', 'SAIDA'
+   ))
 );
 
 alter table if exists cartao add constraint fk_cartao_conta foreign key (conta_numero) references conta;
