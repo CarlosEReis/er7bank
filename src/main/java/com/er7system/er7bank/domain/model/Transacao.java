@@ -1,43 +1,36 @@
 package com.er7system.er7bank.domain.model;
 
-import jakarta.persistence.*;
-import org.hibernate.annotations.CreationTimestamp;
-
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
-@Entity
 public class Transacao {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
-
-    @CreationTimestamp
+    private String codigo;
     private LocalDateTime data;
     private BigDecimal valor;
-
-    @Enumerated(EnumType.STRING)
-    private TipoTransacao tipo;
-
-    @Enumerated(EnumType.STRING)
-    private DescricaoTransacao descricao;
-
-    @ManyToOne
+    private TipoTransacao tipoTransacao;
     private Conta conta;
 
-    public Transacao() {};
-
-    public Transacao(Conta conta, BigDecimal valor, TipoTransacao tipo, DescricaoTransacao descricao) {
+    public Transacao(Conta conta, BigDecimal valor, TipoTransacao tipo) {
         this.conta = conta;
         this.data = LocalDateTime.now();
         this.valor = valor;
-        this.tipo = tipo;
-        this.descricao = descricao;
+        this.tipoTransacao = tipo;
+    }
+
+    public Transacao(String codigo, BigDecimal valor, LocalDateTime data, TipoTransacao tipoTransacao) {
+        this(null, valor, tipoTransacao);
+        this.data = data;
+        this.codigo = codigo;
     }
 
     public Integer getId() {
         return id;
+    }
+
+    public String getCodigo() {
+        return codigo;
     }
 
     public LocalDateTime getData() {
@@ -49,20 +42,19 @@ public class Transacao {
     }
 
     public TipoTransacao getTipo() {
-        return tipo;
+        return tipoTransacao;
     }
 
-    public DescricaoTransacao getDescricao() {
-        return descricao;
+    public String getDescricao() {
+        return getTipo().getDescricao();
     }
 
-    @Override
-    public String toString() {
-        return "Transacao{" +
-                "id=" + id +
-                ", data=" + data +
-                ", valor=" + valor +
-                ", tipo=" + tipo +
-                '}';
+    public Conta getConta() {
+        return conta;
     }
+
+    public TipoOperacao getMovimentacao() {
+        return tipoTransacao.getTipoOperacao();
+    }
+
 }
