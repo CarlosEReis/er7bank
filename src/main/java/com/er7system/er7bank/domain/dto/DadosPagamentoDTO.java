@@ -8,6 +8,6 @@ public record DadosPagamentoDTO (
         Integer idCartao,
         String loja,
         BigDecimal valor,
-        TipoTransacao tipoPagamento,
+        TipoTransacao tipoTransacao,
         String senha
 ) { }
