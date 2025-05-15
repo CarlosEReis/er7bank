@@ -6,7 +6,9 @@ import com.er7system.er7bank.api.model.request.*;
 import com.er7system.er7bank.api.model.response.SaldoContaResponse;
 import com.er7system.er7bank.domain.dto.DadosPagamentoDTO;
 import com.er7system.er7bank.domain.model.Conta;
+import com.er7system.er7bank.domain.model.TipoPagamento;
 import com.er7system.er7bank.domain.model.TipoTransacao;
+import com.er7system.er7bank.domain.model.Transacao;
 import com.er7system.er7bank.domain.service.ContaService;
 import com.er7system.er7bank.domain.service.PagamentoService;
 import org.springframework.http.ResponseEntity;
@@ -80,7 +82,7 @@ public class ContaController {
                 idConta,
                 pagtoCompraRequest.NomeLoja(),
                 pagtoCompraRequest.valor(),
-                TipoTransacao.PIX,
+                TipoTransacao.PAGAMENTO_PIX,
                 pagtoCompraRequest.senha()));
         return ResponseEntity.noContent().build();
     }
@@ -107,6 +109,11 @@ public class ContaController {
     public ResponseEntity<Void> aplicaTaxaRedimento(@PathVariable Integer idConta, @RequestBody TaxaRendimentoRequest taxaRendimentoRequest) {
         contaService.aplicaTaxaRendimento(idConta, taxaRendimentoRequest.valor());
         return ResponseEntity.noContent().build();
+    }
+
+    @GetMapping("/{idConta}/extrato")
+    public List<Transacao> extrato(@PathVariable Long idConta) {
+        return contaService.transacoes(idConta);
     }
 
 }
