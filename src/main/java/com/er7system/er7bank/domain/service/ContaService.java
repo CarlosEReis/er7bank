@@ -17,10 +17,12 @@ public class ContaService {
 
     private final ClienteService clienteService;
     private final ContaRepository contaRepository;
+    private final TransacaoService transacaoService;
     
-    public ContaService(ContaRepository contaRepository,ClienteService clienteService) {
+    public ContaService(ContaRepository contaRepository,ClienteService clienteService, TransacaoService transacaoService) {
         this.clienteService = clienteService;
         this.contaRepository = contaRepository;
+        this.transacaoService = transacaoService;
     }
 
     @Transactional
@@ -47,7 +49,10 @@ public class ContaService {
     public void transferir(Integer idContaOrigem, Integer idContaDestino, BigDecimal valor) {
         Conta contaOrigem = buscarPorId(idContaOrigem);
         Conta contaDestino = buscarPorId(idContaDestino);
+
         contaOrigem.transferir(valor, contaDestino);
+        transacaoService.registrarTransferencia(contaOrigem, contaDestino, valor);
+
         contaRepository.save(contaOrigem);
         contaRepository.save(contaDestino);
     }
@@ -56,7 +61,7 @@ public class ContaService {
     public void depositar(Integer numeroConta, TipoConta tipo, BigDecimal valor) {
         var conta = buscarPorId(numeroConta);
         conta.depositar(valor);
-        conta.registraTransacao(valor, TipoTransacao.DEPOSITO, DescricaoTransacao.DEPOSITO_RECEBIDO);
+        transacaoService.registrar(new Transacao(conta, valor, TipoTransacao.DEPOSITO_CAIXA_ELETRONICO));
         contaRepository.save(conta);
     }
 
@@ -64,7 +69,7 @@ public class ContaService {
     public void sacar(Integer numeroConta, TipoConta tipoConta, BigDecimal valor) {
         var conta = buscarPorId(numeroConta);
         conta.sacar(valor);
-        conta.registraTransacao(valor, TipoTransacao.SAQUE, DescricaoTransacao.SAQUE_REALIZADO);
+        transacaoService.registrar(new Transacao(conta, valor, TipoTransacao.SAQUE_CAIXA_ELETRONICO));
         contaRepository.save(conta);
     }
 
@@ -100,5 +105,9 @@ public class ContaService {
 
     public List<Conta> listar() {
         return contaRepository.findAll();
+    }
+
+    public List<Transacao> transacoes(Long idConta) {
+       return transacaoService.buscaTransacoesPorIdConta(idConta);
     }
 }

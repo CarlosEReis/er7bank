@@ -81,12 +81,6 @@ public abstract class Conta {
 
     public void pix(BigDecimal valor, String chave) {}
 
-    public void registraTransacao(BigDecimal valor, TipoTransacao tipoTransacao, DescricaoTransacao descricao) {
-        var transacao = new Transacao(this, valor, tipoTransacao, descricao);
-        //this.transacoes.add(transacao);
-        this.atualizaDataMovimentacao();
-    }
-
     public LocalDateTime getDataCriacao() {
         return dataCriacao;
     }

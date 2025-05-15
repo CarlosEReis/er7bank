@@ -34,7 +34,7 @@ public class ContaPoupanca extends Conta {
             throw new SaldoInsuficienteException();
 
         saldo = saldo.subtract(valor);
-        //registraTransacao(valor, TipoTransacao.SAQUE);
+        atualizaDataMovimentacao();
     }
 
     @Override
@@ -42,7 +42,6 @@ public class ContaPoupanca extends Conta {
         if (valor == null || valor.compareTo(BigDecimal.ZERO) <= 0)
             throw new IllegalArgumentException("Valor para depósito inválido. Valor deve ser maior que zero.");
         saldo = saldo.add(valor);
-        //registraTransacao(valor, TipoTransacao.DEPOSITO);
     }
 
     @Override
@@ -50,12 +49,10 @@ public class ContaPoupanca extends Conta {
         try{
             sacar(valor);
             atualizaDataMovimentacao();
-            this.registraTransacao(valor, TipoTransacao.SAQUE, DescricaoTransacao.TRANSFERENCIA_ENVIADA);
         } catch (SaldoInsuficienteException e) {
             throw new TrasanferenciaException(e);
         }
         conta.depositar(valor);
-        conta.registraTransacao(valor, TipoTransacao.DEPOSITO, DescricaoTransacao.TRANSFERENCIA_RECEBIDA);
     }
 
     /*
